@@ -93,7 +93,7 @@ graph TB
     subgraph INTERNET["☁️ Internet / ISP"]
         ISP_HCM1["ISP HCM Primary<br/>10.1.0.1"]
         ISP_HCM2["ISP HCM Backup<br/>10.2.0.1"]
-        ISP_HN["ISP Hà Nội"]
+        ISP_HN["ISP Hà Nội<br/>10.4.0.1"]
         ISP_DN["ISP Đà Nẵng<br/>10.3.0.1"]
     end
 
