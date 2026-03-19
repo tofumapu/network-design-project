@@ -1,0 +1,136 @@
+hostname HCM-SWL3-MAIN
+!
+conf t
+ip routing
+!
+vlan 10
+ name KeToan
+vlan 20
+ name QuanLyRuiRo
+vlan 30
+ name IT
+vlan 40
+ name WiFi_CTY
+vlan 50
+ name WiFi_Guest
+vlan 60
+ name Management
+vlan 70
+ name DataCenter
+!
+interface vlan10
+ ip address 10.1.10.2 255.255.255.0
+ standby version 2
+ standby 10 ip 10.1.10.1
+ standby 10 priority 150
+ standby 10 preempt
+!
+interface vlan20
+ ip address 10.1.20.2 255.255.255.0
+ standby version 2
+ standby 20 ip 10.1.20.1
+ standby 20 priority 150
+ standby 20 preempt
+!
+interface vlan30
+ ip address 10.1.30.2 255.255.255.0
+ standby version 2
+ standby 30 ip 10.1.30.1
+ standby 30 priority 150
+ standby 30 preempt
+!
+interface vlan40
+ ip address 10.1.40.2 255.255.255.0
+ standby version 2
+ standby 40 ip 10.1.40.1
+ standby 40 priority 150
+ standby 40 preempt
+!
+interface vlan50
+ ip address 10.1.50.2 255.255.255.0
+ standby version 2
+ standby 50 ip 10.1.50.1
+ standby 50 priority 150
+ standby 50 preempt
+!
+interface vlan60
+ ip address 10.1.60.2 255.255.255.0
+ standby version 2
+ standby 60 ip 10.1.60.1
+ standby 60 priority 150
+ standby 60 preempt
+!
+interface vlan70
+ ip address 10.1.70.2 255.255.255.0
+ standby version 2
+ standby 70 ip 10.1.70.1
+ standby 70 priority 150
+ standby 70 preempt
+!
+interface GigabitEthernet1/0/1
+ description Uplink to Core Router
+ no switchport
+ ip address 10.1.1.2 255.255.255.252
+!
+interface GigabitEthernet1/0/2
+ description Uplink to Backup Router
+ no switchport
+ ip address 10.2.2.2 255.255.255.252
+!
+router ospf 1
+ router-id 1.1.1.1
+ log-adjacency-changes
+ network 10.1.10.0 0.0.0.255 area 0
+ network 10.1.20.0 0.0.0.255 area 0
+ network 10.1.30.0 0.0.0.255 area 0
+ network 10.1.40.0 0.0.0.255 area 0
+ network 10.1.50.0 0.0.0.255 area 0
+ network 10.1.60.0 0.0.0.255 area 0
+ network 10.1.70.0 0.0.0.255 area 0
+ network 10.1.1.0 0.0.0.3 area 0
+ network 10.2.2.0 0.0.0.3 area 0
+!
+spanning-tree vlan 1-4094 root primary
+!
+ip dhcp excluded-address 10.1.10.1 10.1.10.9
+ip dhcp excluded-address 10.1.10.121 10.1.10.254
+ip dhcp excluded-address 10.1.20.1 10.1.20.9
+ip dhcp excluded-address 10.1.20.121 10.1.20.254
+ip dhcp excluded-address 10.1.30.1 10.1.30.9
+ip dhcp excluded-address 10.1.30.121 10.1.30.254
+ip dhcp excluded-address 10.1.40.1 10.1.40.9
+ip dhcp excluded-address 10.1.40.121 10.1.40.254
+ip dhcp excluded-address 10.1.60.1 10.1.60.9
+ip dhcp excluded-address 10.1.60.121 10.1.60.254
+ip dhcp excluded-address 10.1.70.1 10.1.70.9
+ip dhcp excluded-address 10.1.70.121 10.1.70.254
+!
+ip dhcp pool KE-TOAN
+ network 10.1.10.0 255.255.255.0
+ default-router 10.1.10.1
+ dns-server 8.8.8.8
+!
+ip dhcp pool RISK-MGMT
+ network 10.1.20.0 255.255.255.0
+ default-router 10.1.20.1
+ dns-server 8.8.8.8
+!
+ip dhcp pool IT-DEPT
+ network 10.1.30.0 255.255.255.0
+ default-router 10.1.30.1
+ dns-server 8.8.8.8
+!
+ip dhcp pool WF-COMPANY
+ network 10.1.40.0 255.255.255.0
+ default-router 10.1.40.1
+ dns-server 8.8.8.8
+!
+ip dhcp pool NETWORK-MGMT
+ network 10.1.60.0 255.255.255.0
+ default-router 10.1.60.1
+ dns-server 8.8.8.8
+!
+ip dhcp pool DATACENTER
+ network 10.1.70.0 255.255.255.0
+ default-router 10.1.70.1
+ dns-server 8.8.8.8

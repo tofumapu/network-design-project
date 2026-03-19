@@ -1,0 +1,1215 @@
+#Thao tac voi Router
+## Password cho Router khi login qua cong console & telnet
+conf t 
+line console 0
+password cisco 
+login
+exit
+line vty 0 4
+password cisco
+transport input telnet
+login
+exit
+## Password khi vao che do privileged mode (khi enable)
+(config)#enable password cisco
+(config)#enable secret cisco
+## Ma hoa password
+(config)#service password-encryption
+(config)# no service password-encryption (neu muon tat)
+
+#Dat ten router
+(config)# hostname HOSTNAME
+
+#Dat banner cho router
+(config)# banner motd #FastPay HCM xin chao#
+
+#Dat dia chi IP cho interface
+Router(config)#interface fastethernet0/0
+Router(config-if)#ip address 192.168.1.1 255.255.255.0 
+Router(config-if)#no shutdown 
+##Dat cho cong serial
+Router(config)# interface  serial 0/0  
+//Gọi tên cổng cần cấu hình 
+Router(config-if)#ip address 192.168.1.1 255.255.255.0 
+Router(config-if)#clock rate 64000  # Giua cac router xung nhip dong bo voi nhau 
+Router(config-if)#no shutdown
+
+# Description cho interface
+Router(config)#interface fa0/0 
+Router(config-if)#description Kết nối với LAN Sales
+
+# Cau lenh config
+Router#show ip route: Xem bảng định tuyến 
+Router#Show version: Xem cấu hình thanh ghi 
+Router#Show flash: Xem thông tin hệ điều hành (.bin) 
+Router#Show history: Xem tất cả lệnh trong bộ nhớ(buffer) 
+Router#Show ip interface brief 
+Router#Show cdp: Xem thông tin CDP 
+Router#ping : Kiễm tra kết nối 
+Router#Show running-config // hiển thị cấu hình in RAM 
+Router#Show start-config //hiển thị cấu hình in NVRAM   
+
+#Luu tru file cau hinh
+Router#copy running-config startup-config 
+
+#Dinh tuyen tinh (day ra Internet)
+R1(config)#ip route 172.16.2.0 255.255.255.0 172.16.1.2 
+##Default route
+R1(config)#ip route 0.0.0.0.0.0.0.0 172.16.1.2 
+
+#VLAN
+#Tao VLAN
+vlan 10
+ name KeToan
+vlan 20
+ name QuanLyRuiRo
+vlan 30
+ name IT
+vlan 40
+ name WiFi_CTY
+vlan 50
+ name WiFi_Guest
+vlan 60
+ name Management
+vlan 70
+ name DataCenter
+##HSRP: https://youtu.be/jJWQcDDaNHA?si=HSfRtf0rrx6GFd3y
+conf t
+ip routing
+!
+interface vlan10
+ ip address 10.1.10.2 255.255.255.0
+ standby version 2
+ standby 10 ip 10.1.10.1
+ standby 10 priority 150
+ standby 10 preempt
+!
+interface vlan20
+ ip address 10.1.20.2 255.255.255.0
+ standby version 2
+ standby 20 ip 10.1.20.1
+ standby 20 priority 150
+ standby 20 preempt
+!
+interface vlan30
+ ip address 10.1.30.2 255.255.255.0
+ standby version 2
+ standby 30 ip 10.1.30.1
+ standby 30 priority 150
+ standby 30 preempt
+!
+interface vlan40
+ ip address 10.1.40.2 255.255.255.0
+ standby version 2
+ standby 40 ip 10.1.40.1
+ standby 40 priority 150
+ standby 40 preempt
+!
+interface vlan50
+ ip address 10.1.50.2 255.255.255.0
+ standby version 2
+ standby 50 ip 10.1.50.1
+ standby 50 priority 150
+ standby 50 preempt
+!
+interface vlan60
+ ip address 10.1.60.2 255.255.255.0
+ standby version 2
+ standby 60 ip 10.1.60.1
+ standby 60 priority 150
+ standby 60 preempt
+!
+interface vlan70
+ ip address 10.1.70.2 255.255.255.0
+ standby version 2
+ standby 70 ip 10.1.70.1
+ standby 70 priority 150
+ standby 70 preempt
+
+#SWL3 2
+conf t
+ip routing
+!
+interface vlan10
+ ip address 10.1.10.3 255.255.255.0
+ standby version 2
+ standby 10 ip 10.1.10.1
+ standby 10 priority 100
+ no standby 10 preempt
+!
+interface vlan20
+ ip address 10.1.20.3 255.255.255.0
+ standby version 2
+ standby 20 ip 10.1.20.1
+ standby 20 priority 100
+ no standby 20 preempt
+!
+interface vlan30
+ ip address 10.1.30.3 255.255.255.0
+ standby version 2
+ standby 30 ip 10.1.30.1
+ standby 30 priority 100
+ no standby 30 preempt
+!
+interface vlan40
+ ip address 10.1.40.3 255.255.255.0
+ standby version 2
+ standby 40 ip 10.1.40.1
+ standby 40 priority 100
+ no standby 40 preempt
+!
+interface vlan50
+ ip address 10.1.50.3 255.255.255.0
+ standby version 2
+ standby 50 ip 10.1.50.1
+ standby 50 priority 100
+ no standby 50 preempt
+!
+interface vlan60
+ ip address 10.1.60.3 255.255.255.0
+ standby version 2
+ standby 60 ip 10.1.60.1
+ standby 60 priority 100
+ no standby 60 preempt
+!
+interface vlan70
+ ip address 10.1.70.3 255.255.255.0
+ standby version 2
+ standby 70 ip 10.1.70.1
+ standby 70 priority 100
+ no standby 70 preempt
+
+#Tu SWL3 Main -> Core Router
+interface gi1/0/1
+ no switchport
+ip address 10.1.1.2 255.255.255.252
+#Tu SWL3 Main -> Router phu
+interface gi1/0/2
+no switchport
+ ip address 10.2.2.2 255.255.255.252
+#Tu Core Router -> SWL3 (Main)
+int g0/0
+ip add 10.1.1.1 255.255.255.0
+no shut
+#Tu Router phu -> SWL3 (main)
+int g0/1
+ip add 10.2.2.1 255.255.255.0 
+=> Tuong tu voi SWL3 phu nhe
+
+#Tu SWL3 -> SWL3 du phong (trunk) (Da bo)
+interface gi1/0/10
+ switchport mode trunk
+ switchport trunk allowed vlan 10-70
+
+#Dinh tuyen trong SWL3
+ip routing
+router ospf 1
+ router-id 1.1.1.1 # Fix: Moi router dat 1 id khac nhau
+ log-adjacency-changes
+ network 10.1.10.0 0.0.0.255 area 0
+ network 10.1.20.0 0.0.0.255 area 0
+ network 10.1.30.0 0.0.0.255 area 0
+ network 10.1.40.0 0.0.0.255 area 0
+ network 10.1.50.0 0.0.0.255 area 0
+ network 10.1.60.0 0.0.0.255 area 0
+ network 10.1.70.0 0.0.0.255 area 0
+ network 10.1.1.0 0.0.0.3 area 0
+ network 10.2.2.0 0.0.0.3 area 0
+
+#Dinh tuyen SWL3 phu
+ip routing
+ router ospf 1
+ router-id 4.4.4.4
+ log-adjacency-changes
+ network 10.1.10.0 0.0.0.255 area 0
+ network 10.1.20.0 0.0.0.255 area 0
+ network 10.1.30.0 0.0.0.255 area 0
+ network 10.1.40.0 0.0.0.255 area 0
+ network 10.1.50.0 0.0.0.255 area 0
+ network 10.1.60.0 0.0.0.255 area 0
+ network 10.1.70.0 0.0.0.255 area 0
+ network 10.2.1.0 0.0.0.3 area 0
+ network 10.1.2.0 0.0.0.3 area 0
+
+#Set cost ospf nhanh phu
+##SWL3 -> HCM (Backup)
+int g1/0/2
+ip ospf cost 100
+##SWL3 (Backup) -> HCM (Backup)
+int g1/0/2
+ip ospf cost 100
+
+#Switch L2 (VLAN Ke toan)
+en
+conf t
+vlan 10
+ name Ketoan
+vlan 20
+ name QuanLyRuiRo
+vlan 30
+ name IT
+vlan 40
+ name WiFi_CTY
+vlan 50
+ name WiFi_Guest
+vlan 60
+ name Management
+vlan 70
+ name DataCenter
+int Fa0/4 
+switchport mode trunk
+switchport trunk allowed vlan 10-70
+int Fa0/5
+switchport mode trunk
+switchport trunk allowed vlan 10-70
+int range Fa0/1-3
+switchport mode access 
+switchport access vlan 10
+##Switch L2 (VLAN Quan Ly rui ro)
+en
+conf t
+vlan 10
+ name Ketoan
+vlan 20
+ name QuanLyRuiRo
+vlan 30
+ name IT
+vlan 40
+ name WiFi_CTY
+vlan 50
+ name WiFi_Guest
+vlan 60
+ name Management
+vlan 70
+ name DataCenter
+int Fa0/4 
+switchport mode trunk
+switchport trunk allowed vlan 10-70
+int Fa0/5 
+switchport mode trunk
+switchport trunk allowed vlan 10-70
+int range Fa0/1-3
+switchport mode access 
+switchport access vlan 20
+##Switch L2 (VLAN IT)
+en
+conf t
+vlan 10
+ name Ketoan
+vlan 20
+ name QuanLyRuiRo
+vlan 30
+ name IT
+vlan 40
+ name WiFi_CTY
+vlan 50
+ name WiFi_Guest
+vlan 60
+ name Management
+vlan 70
+ name DataCenter
+int Fa0/4 
+switchport mode trunk
+switchport trunk allowed vlan 10-70
+int Fa0/5 
+switchport mode trunk
+switchport trunk allowed vlan 10-70
+int range Fa0/1-3
+switchport mode access 
+switchport access vlan 30
+##Switch L2 (VLAN Wifi Company)
+en
+conf t
+vlan 10
+ name Ketoan
+vlan 20
+ name QuanLyRuiRo
+vlan 30
+ name IT
+vlan 40
+ name WiFi_CTY
+vlan 50
+ name WiFi_Guest
+vlan 60
+ name Management
+vlan 70
+ name DataCenter
+int Fa0/1
+switchport mode trunk
+switchport trunk allowed vlan 10-70
+int Fa0/2
+switchport mode trunk
+switchport trunk allowed vlan 10-70
+int range G0/1-2
+switchport mode access
+switchport access vlan 40
+int range Fa0/3-5
+switchport mode access
+switchport access vlan 40
+
+##Switch L2 (VLAN Wifi Guest)
+en
+conf t
+vlan 10
+ name Ketoan
+vlan 20
+ name QuanLyRuiRo
+vlan 30
+ name IT
+vlan 40
+ name WiFi_CTY
+vlan 50
+ name WiFi_Guest
+vlan 60
+ name Management
+vlan 70
+ name DataCenter
+int Fa0/1
+switchport mode trunk
+switchport trunk allowed vlan 10-70
+int Fa0/2
+switchport mode trunk
+switchport trunk allowed vlan 10-70
+int G0/1
+switchport mode access 
+switchport access vlan 50
+##Switch L2 (VLAN Management)
+en
+conf t
+vlan 10
+ name Ketoan
+vlan 20
+ name QuanLyRuiRo
+vlan 30
+ name IT
+vlan 40
+ name WiFi_CTY
+vlan 50
+ name WiFi_Guest
+vlan 60
+ name Management
+vlan 70
+ name DataCenter
+int Fa0/1
+switchport mode trunk
+switchport trunk allowed vlan 10-70
+int Fa0/2
+switchport mode trunk
+switchport trunk allowed vlan 10-70
+int range G0/1-2
+switchport mode access 
+switchport access vlan 60
+
+##Switch L2 (VLAN DataCenter)
+en
+conf t
+vlan 10
+ name Ketoan
+vlan 20
+ name QuanLyRuiRo
+vlan 30
+ name IT
+vlan 40
+ name WiFi_CTY
+vlan 50
+ name WiFi_Guest
+vlan 60
+ name Management
+vlan 70
+ name DataCenter
+int Fa0/6
+switchport mode trunk
+switchport trunk allowed vlan 10-70
+int Fa0/7
+switchport mode trunk
+switchport trunk allowed vlan 10-70
+int range Fa0/1-5
+switchport mode access 
+switchport access vlan 70
+
+#Spanning tree cho 2 SWL3
+##Main
+spanning-tree vlan 1-4094 root primary
+or| spanning-tree vlan 1-4094 priority 4096
+##Backup
+spanning-tree vlan 1-4094 root secondary
+or| spanning-tree vlan 1-4094 priority 8192
+
+#Default route -> ISP
+##Router HCM
+ip route 0.0.0.0 0.0.0.0 10.1.0.1
+router ospf 1 
+default-information originate
+##Router HCM(Backup)
+ip route 0.0.0.0 0.0.0.0 10.2.0.1
+router ospf 1
+default-information originate
+
+
+#DHCP Pool WIFI-COMPANY
+##Trên SWL3-Main
+ip dhcp excluded-address 10.1.40.1 10.1.40.9
+ip dhcp excluded-address 10.1.40.121 10.1.40.254
+ip dhcp pool WIFI-COMPANY
+network 10.1.40.0 255.255.255.0
+default-router 10.1.40.1
+dns-server 8.8.8.8
+##SWL3 Backup
+ip dhcp excluded-address 10.1.40.1 10.1.40.120
+ip dhcp pool WIFI-COMPANY
+network 10.1.40.0 255.255.255.0
+default-router 10.1.40.1
+dns-server 8.8.8.8
+
+#DHCP Pool cac mang VLAN (tru Wifi Congty va Khach)
+##SWL3 Main
+! VLAN 10 - Kế Toán
+ip dhcp excluded-address 10.1.10.1 10.1.10.9
+ip dhcp excluded-address 10.1.10.121 10.1.10.254
+
+! VLAN 20 - Quản Lý Rủi Ro
+ip dhcp excluded-address 10.1.20.1 10.1.20.9
+ip dhcp excluded-address 10.1.20.121 10.1.20.254
+
+! VLAN 30 - IT
+ip dhcp excluded-address 10.1.30.1 10.1.30.9
+ip dhcp excluded-address 10.1.30.121 10.1.30.254
+
+! VLAN 40 - WF-COMPANY
+ip dhcp excluded-address 10.1.40.1 10.1.40.9
+ip dhcp excluded-address 10.1.40.121 10.1.40.254
+
+! VLAN 60 - Quản Lý Mạng (Management)
+ip dhcp excluded-address 10.1.60.1 10.1.60.9
+ip dhcp excluded-address 10.1.60.121 10.1.60.254
+
+! VLAN 70 - DataCenter (Server thường đặt tĩnh, nhưng cứ tạo pool cho chắc)
+ip dhcp excluded-address 10.1.70.1 10.1.70.9
+ip dhcp excluded-address 10.1.70.121 10.1.70.254
+
+ip dhcp pool KE-TOAN
+ network 10.1.10.0 255.255.255.0
+ default-router 10.1.10.1
+ dns-server 8.8.8.8
+
+ip dhcp pool RISK-MGMT
+ network 10.1.20.0 255.255.255.0
+ default-router 10.1.20.1
+ dns-server 8.8.8.8
+
+ip dhcp pool IT-DEPT
+ network 10.1.30.0 255.255.255.0
+ default-router 10.1.30.1
+ dns-server 8.8.8.8
+
+ip dhcp pool NETWORK-MGMT
+ network 10.1.60.0 255.255.255.0
+ default-router 10.1.60.1
+ dns-server 8.8.8.8
+
+ip dhcp pool DATACENTER
+ network 10.1.70.0 255.255.255.0
+ default-router 10.1.70.1
+ dns-server 8.8.8.8
+
+ip dhcp pool WF-COMPANY
+ network 10.1.40.0 255.255.255.0
+ default-router 10.1.40.1
+ dns-server 8.8.8.8
+##SWL3 Backup 
+ip dhcp excluded-address 10.1.10.1 10.1.10.120
+ip dhcp excluded-address 10.1.20.1 10.1.20.120
+ip dhcp excluded-address 10.1.30.1 10.1.30.120
+ip dhcp excluded-address 10.1.40.1 10.1.40.120
+ip dhcp excluded-address 10.1.60.1 10.1.60.120
+ip dhcp excluded-address 10.1.70.1 10.1.70.120
+ip dhcp pool KE-TOAN
+ network 10.1.10.0 255.255.255.0
+ default-router 10.1.10.1
+ dns-server 8.8.8.8
+
+ip dhcp pool RISK-MGMT
+ network 10.1.20.0 255.255.255.0
+ default-router 10.1.20.1
+ dns-server 8.8.8.8
+
+ip dhcp pool IT-DEPT
+ network 10.1.30.0 255.255.255.0
+ default-router 10.1.30.1
+ dns-server 8.8.8.8
+
+ip dhcp pool WF-COMPANY
+ network 10.1.40.0 255.255.255.0
+ default-router 10.1.40.1
+ dns-server 8.8.8.8
+ option 43 ip 10.1.40.254
+
+ip dhcp pool NETWORK-MGMT
+ network 10.1.60.0 255.255.255.0
+ default-router 10.1.60.1
+ dns-server 8.8.8.8
+
+ip dhcp pool DATACENTER
+ network 10.1.70.0 255.255.255.0
+ default-router 10.1.70.1
+ dns-server 8.8.8.8
+
+#Cau hinh mang WF-GUEST tren ISP
+ip dhcp pool WF-GUEST
+ network 120.36.18.0 255.255.255.0
+ default-router 120.36.18.1
+ dns-server 8.8.8.8
+----------------------------------------------------------------------------------------------------
+Tai Chi nhanh HaNoi
+----------------------
+------------------------------------------------------------------------------
+#SWL3 cho HaNoi
+##SWL3 Main
+ip routing
+!
+interface vlan10
+ ip address 10.4.10.2 255.255.255.0
+ standby version 2
+ standby 10 ip 10.4.10.1
+ standby 10 priority 150
+ standby 10 preempt
+!
+interface vlan20
+ ip address 10.4.20.2 255.255.255.0
+ standby version 2
+ standby 20 ip 10.4.20.1
+ standby 20 priority 150
+ standby 20 preempt
+!
+interface vlan30
+ ip address 10.4.30.2 255.255.255.0
+ standby version 2
+ standby 30 ip 10.4.30.1
+ standby 30 priority 150
+ standby 30 preempt
+!
+interface vlan40
+ ip address 10.4.40.2 255.255.255.0
+ standby version 2
+ standby 40 ip 10.4.40.1
+ standby 40 priority 150
+ standby 40 preempt
+!
+interface vlan50
+ ip address 10.4.50.2 255.255.255.0
+ standby version 2
+ standby 50 ip 10.4.50.1
+ standby 50 priority 150
+ standby 50 preempt
+!
+interface vlan60
+ ip address 10.4.60.2 255.255.255.0
+ standby version 2
+ standby 60 ip 10.4.60.1
+ standby 60 priority 150
+ standby 60 preempt
+!
+##SWL3 Backup
+ip routing
+!
+interface vlan10
+ ip address 10.4.10.3 255.255.255.0
+ standby version 2
+ standby 10 ip 10.4.10.1
+ standby 10 priority 100
+ no standby 10 preempt
+!
+interface vlan20
+ ip address 10.4.20.3 255.255.255.0
+ standby version 2
+ standby 20 ip 10.4.20.1
+ standby 20 priority 100
+ no standby 20 preempt
+!
+interface vlan30
+ ip address 10.4.30.3 255.255.255.0
+ standby version 2
+ standby 30 ip 10.4.30.1
+ standby 30 priority 100
+ no standby 30 preempt
+!
+interface vlan40
+ ip address 10.4.40.3 255.255.255.0
+ standby version 2
+ standby 40 ip 10.4.40.1
+ standby 40 priority 100
+ no standby 40 preempt
+!
+interface vlan50
+ ip address 10.4.50.3 255.255.255.0
+ standby version 2
+ standby 50 ip 10.4.50.1
+ standby 50 priority 100
+ no standby 50 preempt
+!
+interface vlan60
+ ip address 10.4.60.3 255.255.255.0
+ standby version 2
+ standby 60 ip 10.4.60.1
+ standby 60 priority 100
+ no standby 60 preempt
+!
+#Tu SWL3 Main -> Core Router
+interface gi1/0/1
+ no switchport
+ip address 10.4.1.2 255.255.255.252
+#Tu SWL3 Main -> Router phu
+interface gi1/0/1
+no switchport
+ ip address 10.4.2.2 255.255.255.252
+
+# Dinh tuyen ospf
+##SWL3 main
+router ospf 1
+ router-id 6.6.6.6
+ log-adjacency-changes
+ network 10.4.10.0 0.0.0.255 area 1
+ network 10.4.20.0 0.0.0.255 area 1
+ network 10.4.30.0 0.0.0.255 area 1
+ network 10.4.40.0 0.0.0.255 area 1
+ network 10.4.50.0 0.0.0.255 area 1
+ network 10.4.60.0 0.0.0.255 area 1
+ network 10.4.1.0 0.0.0.3 area 1
+ network 10.4.2.0 0.0.0.3 area 1
+##SWL3 phu
+router ospf 1
+ router-id 7.7.7.7
+ log-adjacency-changes
+ network 10.4.10.0 0.0.0.255 area 1
+ network 10.4.20.0 0.0.0.255 area 1
+ network 10.4.30.0 0.0.0.255 area 1
+ network 10.4.40.0 0.0.0.255 area 1
+ network 10.4.50.0 0.0.0.255 area 1
+ network 10.4.60.0 0.0.0.255 area 1
+ network 10.4.1.0 0.0.0.3 area 1
+ network 10.4.2.0 0.0.0.3 area 1
+
+#Set cost cho Router HaNoi
+##SWL3 (Backup) -> HaNoi 
+int g1/0/1
+ip ospf cost 100
+
+#Switch Access (VLAN Ke Toan)
+en
+conf t
+vlan 10
+ name Ketoan
+vlan 20
+ name QuanLyRuiRo
+vlan 30
+ name IT
+vlan 40
+ name WiFi_CTY
+vlan 50
+ name WiFi_Guest
+vlan 60
+ name Management
+int Fa0/4 
+switchport mode trunk
+switchport trunk allowed vlan 10-60
+int Fa0/5
+switchport mode trunk
+switchport trunk allowed vlan 10-60
+int range Fa0/1-3
+switchport mode access 
+switchport access vlan 10
+
+##Switch L2 (VLAN Quan Ly rui ro)
+en
+conf t
+vlan 10
+ name Ketoan
+vlan 20
+ name QuanLyRuiRo
+vlan 30
+ name IT
+vlan 40
+ name WiFi_CTY
+vlan 50
+ name WiFi_Guest
+vlan 60
+ name Management
+int Fa0/4 
+switchport mode trunk
+switchport trunk allowed vlan 10-60
+int Fa0/5 
+switchport mode trunk
+switchport trunk allowed vlan 10-60
+int range Fa0/1-3
+switchport mode access 
+switchport access vlan 20
+
+##Switch L2 (VLAN IT)
+en
+conf t
+vlan 10
+ name Ketoan
+vlan 20
+ name QuanLyRuiRo
+vlan 30
+ name IT
+vlan 40
+ name WiFi_CTY
+vlan 50
+ name WiFi_Guest
+vlan 60
+ name Management
+int Fa0/4 
+switchport mode trunk
+switchport trunk allowed vlan 10-60
+int Fa0/5 
+switchport mode trunk
+switchport trunk allowed vlan 10-60
+int range Fa0/1-3
+switchport mode access 
+switchport access vlan 30
+
+##Switch L2 (VLAN Wifi Company)
+en
+conf t
+vlan 10
+ name Ketoan
+vlan 20
+ name QuanLyRuiRo
+vlan 30
+ name IT
+vlan 40
+ name WiFi_CTY
+vlan 50
+ name WiFi_Guest
+vlan 60
+ name Management
+int Fa0/5
+switchport mode trunk
+switchport trunk allowed vlan 10-60
+int Fa0/6
+switchport mode trunk
+switchport trunk allowed vlan 10-60
+int range Fa0/1-4
+switchport mode access
+switchport access vlan 40
+
+##Switch L2 (VLAN Management)
+en
+conf t
+vlan 10
+ name Ketoan
+vlan 20
+ name QuanLyRuiRo
+vlan 30
+ name IT
+vlan 40
+ name WiFi_CTY
+vlan 50
+ name WiFi_Guest
+vlan 60
+ name Management
+int Fa0/1
+switchport mode trunk
+switchport trunk allowed vlan 10-60
+int Fa0/2
+switchport mode trunk
+switchport trunk allowed vlan 10-60
+int G0/1
+switchport mode access 
+switchport access vlan 60
+
+#Spanning tree cho 2 SWL3
+##Main
+spanning-tree vlan 1-4094 root primary
+or| spanning-tree vlan 10-60 priority 4096
+##Backup
+spanning-tree vlan 1-4094 root secondary
+or| spanning-tree vlan 10-70 priority 8192
+
+#DHCP Cho SWL3
+##SWL3 Main (Hà Nội)
+
+! VLAN 10 - Kế Toán
+ip dhcp excluded-address 10.4.10.1 10.4.10.9
+ip dhcp excluded-address 10.4.10.121 10.4.10.254
+
+! VLAN 20 - Quản Lý Rủi Ro
+ip dhcp excluded-address 10.4.20.1 10.4.20.9
+ip dhcp excluded-address 10.4.20.121 10.4.20.254
+
+! VLAN 30 - IT
+ip dhcp excluded-address 10.4.30.1 10.4.30.9
+ip dhcp excluded-address 10.4.30.121 10.4.30.254
+
+! VLAN 40 - WF-COMPANY
+ip dhcp excluded-address 10.4.40.1 10.4.40.9
+ip dhcp excluded-address 10.4.40.121 10.4.40.254
+
+! VLAN 60 - Quản Lý Mạng (Management)
+ip dhcp excluded-address 10.4.60.1 10.4.60.9
+ip dhcp excluded-address 10.4.60.121 10.4.60.254
+
+ip dhcp pool KE-TOAN_HN
+ network 10.4.10.0 255.255.255.0
+ default-router 10.4.10.1
+ dns-server 8.8.8.8
+
+ip dhcp pool RISK-MGMT_HN
+ network 10.4.20.0 255.255.255.0
+ default-router 10.4.20.1
+ dns-server 8.8.8.8
+
+ip dhcp pool IT-DEPT_HN
+ network 10.4.30.0 255.255.255.0
+ default-router 10.4.30.1
+ dns-server 8.8.8.8
+
+ip dhcp pool NETWORK-MGMT_HN
+ network 10.4.60.0 255.255.255.0
+ default-router 10.4.60.1
+ dns-server 8.8.8.8
+
+ip dhcp pool WF-COMPANY_HN
+ network 10.4.40.0 255.255.255.0
+ default-router 10.4.40.1
+ dns-server 8.8.8.8
+
+##SWL3 Backup (Hà Nội)
+
+! --- Loại trừ dải chính (.1 - .120) ---
+
+ip dhcp excluded-address 10.4.10.1 10.4.10.120
+ip dhcp excluded-address 10.4.20.1 10.4.20.120
+ip dhcp excluded-address 10.4.30.1 10.4.30.120
+ip dhcp excluded-address 10.4.40.1 10.4.40.120
+ip dhcp excluded-address 10.4.60.1 10.4.60.120
+
+ip dhcp pool KE-TOAN_HN
+ network 10.4.10.0 255.255.255.0
+ default-router 10.4.10.1
+ dns-server 8.8.8.8
+
+ip dhcp pool RISK-MGMT_HN
+ network 10.4.20.0 255.255.255.0
+ default-router 10.4.20.1
+ dns-server 8.8.8.8
+
+ip dhcp pool IT-DEPT_HN
+ network 10.4.30.0 255.255.255.0
+ default-router 10.4.30.1
+ dns-server 8.8.8.8
+
+ip dhcp pool WF-COMPANY_HN
+ network 10.4.40.0 255.255.255.0
+ default-router 10.4.40.1
+ dns-server 8.8.8.8
+
+ip dhcp pool NETWORK-MGMT_HN
+ network 10.4.60.0 255.255.255.0
+ default-router 10.4.60.1
+ dns-server 8.8.8.8
+
+#Cau hinh mang WF-GUEST tren ISP
+ip dhcp pool WF-GUEST-HN
+ network 120.36.19.0 255.255.255.0
+ default-router 120.36.19.1
+ dns-server 8.8.8.8
+
+
+----------------------------------------------------------------------------------------------------
+Tai Chi nhanh DaNang
+----------------------
+------------------------------------------------------------------------------
+#Core Router DN
+! Kết nối SWL3 Main DN
+interface GigabitEthernet0/0
+ ip address 10.3.1.1 255.255.255.252
+ duplex auto
+ speed auto
+ no shutdown
+!
+! Kết nối SWL3 Backup DN
+interface GigabitEthernet0/1
+ ip address 10.3.2.1 255.255.255.252
+ duplex auto
+ speed auto
+ no shutdown
+!
+! Cổng ra ngoài 
+interface Serial0/0/1
+ ip address 10.3.0.2 255.255.255.0
+ no shutdown
+
+ip route 0.0.0.0 0.0.0.0 10.3.0.1
+
+# SWL3 Main
+
+interface gi1/0/1
+ no switchport
+ ip address 10.3.1.2 255.255.255.252
+ no shutdown
+
+! Bật định tuyến L3
+ip routing
+
+! Tạo các VLAN 
+vlan 10
+ name Ketoan
+vlan 20
+ name QuanLyRuiRo
+vlan 30
+ name IT
+vlan 40
+ name WiFi_CTY
+vlan 60
+ name Management
+
+! Cấu hình HSRP (Active) trên các SVI
+interface vlan10
+ ip address 10.3.10.2 255.255.255.0
+ standby version 2
+ standby 10 ip 10.3.10.1
+ standby 10 priority 150
+ standby 10 preempt
+!
+interface vlan20
+ ip address 10.3.20.2 255.255.255.0
+ standby version 2
+ standby 20 ip 10.3.20.1
+ standby 20 priority 150
+ standby 20 preempt
+!
+interface vlan30
+ ip address 10.3.30.2 255.255.255.0
+ standby version 2
+ standby 30 ip 10.3.30.1
+ standby 30 priority 150
+ standby 30 preempt
+!
+interface vlan40
+ ip address 10.3.40.2 255.255.255.0
+ standby version 2
+ standby 40 ip 10.3.40.1
+ standby 40 priority 150
+ standby 40 preempt
+!
+interface vlan60
+ ip address 10.3.60.2 255.255.255.0
+ standby version 2
+ standby 60 ip 10.3.60.1
+ standby 60 priority 150
+ standby 60 preempt
+
+
+!
+ip route 0.0.0.0 0.0.0.0 10.3.1.1
+! Định tuyến OSPF (Area 0 nội bộ)
+router ospf 1
+ router-id 9.9.9.9
+ log-adjacency-changes
+ network 10.3.10.0 0.0.0.255 area 0
+ network 10.3.20.0 0.0.0.255 area 0
+ network 10.3.30.0 0.0.0.255 area 0
+ network 10.3.40.0 0.0.0.255 area 0
+ network 10.3.60.0 0.0.0.255 area 0
+ network 10.3.1.0 0.0.0.3 area 0 
+ network 10.3.2.0 0.0.0.3 area 0
+
+! DHCP 
+!
+ip dhcp excluded-address 10.3.10.1 10.3.10.9
+ip dhcp excluded-address 10.3.10.121 10.3.10.254
+ip dhcp excluded-address 10.3.20.1 10.3.20.9
+ip dhcp excluded-address 10.3.20.121 10.3.20.254
+ip dhcp excluded-address 10.3.30.1 10.3.30.9
+ip dhcp excluded-address 10.3.30.121 10.3.30.254
+ip dhcp excluded-address 10.3.40.1 10.3.40.9
+ip dhcp excluded-address 10.3.40.121 10.3.40.254
+ip dhcp excluded-address 10.3.60.1 10.3.60.9
+ip dhcp excluded-address 10.3.60.121 10.3.60.254
+!
+ip dhcp pool KE-TOAN_DN
+ network 10.3.10.0 255.255.255.0
+ default-router 10.3.10.1
+ dns-server 8.8.8.8
+!
+ip dhcp pool RISK-MGMT_DN
+ network 10.3.20.0 255.255.255.0
+ default-router 10.3.20.1
+ dns-server 8.8.8.8
+!
+ip dhcp pool IT-DEPT_DN
+ network 10.3.30.0 255.255.255.0
+ default-router 10.3.30.1
+ dns-server 8.8.8.8
+!
+ip dhcp pool WF-COMPANY_DN
+ network 10.3.40.0 255.255.255.0
+ default-router 10.3.40.1
+ dns-server 8.8.8.8
+!
+ip dhcp pool NETWORK-MGMT_DN
+ network 10.3.60.0 255.255.255.0
+ default-router 10.3.60.1
+ dns-server 8.8.8.8
+!
+spanning-tree mode rapid-pvst
+spanning-tree vlan 10,20,30,40,60 root primary
+
+!
+interface range GigabitEthernet1/0/2 - 5
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,30,40,60
+
+#SWL3 Backup DN
+interface gi1/0/1
+ no switchport
+ ip address 10.3.2.2 255.255.255.252
+ no shutdown
+ ip ospf cost 100
+
+ip routing
+
+! Cấu hình các VLAN 
+vlan 10
+ name Ketoan
+vlan 20
+ name QuanLyRuiRo
+vlan 30
+ name IT
+vlan 40
+ name WiFi_CTY
+vlan 60
+ name Management
+
+! Cấu hình HSRP (Standby) trên các SVI
+interface vlan10
+ ip address 10.3.10.3 255.255.255.0
+ standby version 2
+ standby 10 ip 10.3.10.1
+ standby 10 priority 100
+ no standby 10 preempt
+!
+interface vlan20
+ ip address 10.3.20.3 255.255.255.0
+ standby version 2
+ standby 20 ip 10.3.20.1
+ standby 20 priority 100
+ no standby 20 preempt
+!
+interface vlan30
+ ip address 10.3.30.3 255.255.255.0
+ standby version 2
+ standby 30 ip 10.3.30.1
+ standby 30 priority 100
+ no standby 30 preempt
+!
+interface vlan40
+ ip address 10.3.40.3 255.255.255.0
+ standby version 2
+ standby 40 ip 10.3.40.1
+ standby 40 priority 100
+ no standby 40 preempt
+!
+interface vlan60
+ ip address 10.3.60.3 255.255.255.0
+ standby version 2
+ standby 60 ip 10.3.60.1
+ standby 60 priority 100
+ no standby 60 preempt
+
+! Định tuyến OSPF (Area 0 nội bộ)
+router ospf 1
+ router-id 10.10.10.10
+ log-adjacency-changes
+ network 10.3.10.0 0.0.0.255 area 0
+ network 10.3.20.0 0.0.0.255 area 0
+ network 10.3.30.0 0.0.0.255 area 0
+ network 10.3.40.0 0.0.0.255 area 0
+ network 10.3.60.0 0.0.0.255 area 0
+ network 10.3.1.0 0.0.0.3 area 0 
+ network 10.3.2.0 0.0.0.3 area 0    
+! Định tuyến tĩnh dự phòng ra ngoài
+ip route 0.0.0.0 0.0.0.0 10.3.2.1 10
+
+
+! 
+ip dhcp excluded-address 10.3.10.1 10.3.10.120
+ip dhcp excluded-address 10.3.20.1 10.3.20.120
+ip dhcp excluded-address 10.3.30.1 10.3.30.120
+ip dhcp excluded-address 10.3.40.1 10.3.40.120
+ip dhcp excluded-address 10.3.60.1 10.3.60.120
+
+! Khai báo DHCP Pools (Giống hệt SWL3 Main)
+ip dhcp pool KE-TOAN_DN
+ network 10.3.10.0 255.255.255.0
+ default-router 10.3.10.1
+ dns-server 8.8.8.8
+ip dhcp pool RISK-MGMT_DN
+ network 10.3.20.0 255.255.255.0
+ default-router 10.3.20.1
+ dns-server 8.8.8.8
+ip dhcp pool IT-DEPT_DN
+ network 10.3.30.0 255.255.255.0
+ default-router 10.3.30.1
+ dns-server 8.8.8.8
+ip dhcp pool WF-COMPANY_DN
+ network 10.3.40.0 255.255.255.0
+ default-router 10.3.40.1
+ dns-server 8.8.8.8
+ip dhcp pool NETWORK-MGMT_DN
+ network 10.3.60.0 255.255.255.0
+ default-router 10.3.60.1
+ dns-server 8.8.8.8
+!
+spanning-tree mode rapid-pvst
+spanning-tree vlan 10,20,30,40,60 root secondary
+
+#Trên các SWL2
+conf t
+vlan 10
+ name Ketoan
+vlan 20
+ name QuanLyRuiRo
+vlan 30
+ name IT
+vlan 40
+ name WiFi_CTY
+vlan 60
+ name Management
+##SWL2 10 (ĐÁNH SỐ THEO VLAN)
+interface range FastEthernet0/1 - 3
+ switchport mode access 
+ switchport access vlan 10
+interface range FastEthernet0/4 - 5
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,30,40,60
+##SWL2 20 
+interface range FastEthernet0/1 - 3
+ switchport mode access 
+ switchport access vlan 20
+interface range FastEthernet0/4 - 5
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,30,40,60
+##SWL2 30
+interface range FastEthernet0/1 - 3
+ switchport mode access 
+ switchport access vlan 30
+interface range FastEthernet0/4 - 5
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,30,40,60
+##SWL2 40
+interface range FastEthernet0/1 - 4
+ switchport mode access 
+ switchport access vlan 40
+interface range FastEthernet0/5 - 6
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,30,40,60
+##SWL2 60
+interface GigabitEthernet0/1
+ switchport mode access 
+ switchport access vlan 60
+int range Fa0/1-2
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,30,40,60

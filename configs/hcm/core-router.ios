@@ -1,0 +1,35 @@
+hostname HCM-CORE-ROUTER
+!
+conf t
+line console 0
+ password <CONSOLE_PASSWORD>
+ login
+exit
+line vty 0 4
+ password <VTY_PASSWORD>
+ transport input telnet
+ login
+exit
+enable password <ENABLE_PASSWORD>
+enable secret <ENABLE_SECRET>
+service password-encryption
+!
+banner motd #FastPay HCM - Authorized Access Only#
+!
+interface GigabitEthernet0/0
+ description Uplink to SWL3-Main
+ ip address 10.1.1.1 255.255.255.0
+ no shutdown
+!
+interface Serial0/0/0
+ description WAN Link to ISP
+ ip address 10.1.0.2 255.255.255.0
+ no shutdown
+!
+ip route 0.0.0.0 0.0.0.0 10.1.0.1
+!
+router ospf 1
+ router-id 2.2.2.2
+ log-adjacency-changes
+ network 10.1.1.0 0.0.0.3 area 0
+ default-information originate

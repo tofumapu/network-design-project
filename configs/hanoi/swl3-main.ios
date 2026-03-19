@@ -1,0 +1,113 @@
+hostname HN-SWL3-MAIN
+!
+ip routing
+!
+vlan 10
+ name Ketoan
+vlan 20
+ name QuanLyRuiRo
+vlan 30
+ name IT
+vlan 40
+ name WiFi_CTY
+vlan 50
+ name WiFi_Guest
+vlan 60
+ name Management
+!
+interface vlan10
+ ip address 10.4.10.2 255.255.255.0
+ standby version 2
+ standby 10 ip 10.4.10.1
+ standby 10 priority 150
+ standby 10 preempt
+!
+interface vlan20
+ ip address 10.4.20.2 255.255.255.0
+ standby version 2
+ standby 20 ip 10.4.20.1
+ standby 20 priority 150
+ standby 20 preempt
+!
+interface vlan30
+ ip address 10.4.30.2 255.255.255.0
+ standby version 2
+ standby 30 ip 10.4.30.1
+ standby 30 priority 150
+ standby 30 preempt
+!
+interface vlan40
+ ip address 10.4.40.2 255.255.255.0
+ standby version 2
+ standby 40 ip 10.4.40.1
+ standby 40 priority 150
+ standby 40 preempt
+!
+interface vlan50
+ ip address 10.4.50.2 255.255.255.0
+ standby version 2
+ standby 50 ip 10.4.50.1
+ standby 50 priority 150
+ standby 50 preempt
+!
+interface vlan60
+ ip address 10.4.60.2 255.255.255.0
+ standby version 2
+ standby 60 ip 10.4.60.1
+ standby 60 priority 150
+ standby 60 preempt
+!
+interface GigabitEthernet1/0/1
+ description Uplink to Core Router HN
+ no switchport
+ ip address 10.4.1.2 255.255.255.252
+!
+router ospf 1
+ router-id 6.6.6.6
+ log-adjacency-changes
+ network 10.4.10.0 0.0.0.255 area 1
+ network 10.4.20.0 0.0.0.255 area 1
+ network 10.4.30.0 0.0.0.255 area 1
+ network 10.4.40.0 0.0.0.255 area 1
+ network 10.4.50.0 0.0.0.255 area 1
+ network 10.4.60.0 0.0.0.255 area 1
+ network 10.4.1.0 0.0.0.3 area 1
+ network 10.4.2.0 0.0.0.3 area 1
+!
+spanning-tree vlan 1-4094 root primary
+!
+ip dhcp excluded-address 10.4.10.1 10.4.10.9
+ip dhcp excluded-address 10.4.10.121 10.4.10.254
+ip dhcp excluded-address 10.4.20.1 10.4.20.9
+ip dhcp excluded-address 10.4.20.121 10.4.20.254
+ip dhcp excluded-address 10.4.30.1 10.4.30.9
+ip dhcp excluded-address 10.4.30.121 10.4.30.254
+ip dhcp excluded-address 10.4.40.1 10.4.40.9
+ip dhcp excluded-address 10.4.40.121 10.4.40.254
+ip dhcp excluded-address 10.4.60.1 10.4.60.9
+ip dhcp excluded-address 10.4.60.121 10.4.60.254
+!
+ip dhcp pool KE-TOAN_HN
+ network 10.4.10.0 255.255.255.0
+ default-router 10.4.10.1
+ dns-server 8.8.8.8
+!
+ip dhcp pool RISK-MGMT_HN
+ network 10.4.20.0 255.255.255.0
+ default-router 10.4.20.1
+ dns-server 8.8.8.8
+!
+ip dhcp pool IT-DEPT_HN
+ network 10.4.30.0 255.255.255.0
+ default-router 10.4.30.1
+ dns-server 8.8.8.8
+!
+ip dhcp pool WF-COMPANY_HN
+ network 10.4.40.0 255.255.255.0
+ default-router 10.4.40.1
+ dns-server 8.8.8.8
+!
+ip dhcp pool NETWORK-MGMT_HN
+ network 10.4.60.0 255.255.255.0
+ default-router 10.4.60.1
+ dns-server 8.8.8.8

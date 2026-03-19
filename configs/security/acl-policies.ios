@@ -1,0 +1,60 @@
+ip access-list extended RESTRICT_VLAN
+ permit tcp any 10.1.60.0 0.0.0.255 established
+ deny ip any 10.1.60.0 0.0.0.255
+ deny ip any 10.1.10.0 0.0.0.255
+ deny ip any 10.1.20.0 0.0.0.255
+ deny ip any 10.1.30.0 0.0.0.255
+ deny ip any 10.1.40.0 0.0.0.255
+ permit ip any any
+!
+interface Vlan10
+ ip access-group RESTRICT_VLAN in
+interface Vlan20
+ ip access-group RESTRICT_VLAN in
+interface Vlan30
+ ip access-group RESTRICT_VLAN in
+interface Vlan40
+ ip access-group RESTRICT_VLAN in
+exit
+!
+!
+ip access-list extended RESTRICT_HN_VLAN
+ permit tcp any 10.4.60.0 0.0.0.255 established
+ deny ip any 10.4.60.0 0.0.0.255
+ deny ip any 10.4.10.0 0.0.0.255
+ deny ip any 10.4.20.0 0.0.0.255
+ deny ip any 10.4.30.0 0.0.0.255
+ deny ip any 10.4.40.0 0.0.0.255
+ permit ip any any
+exit
+!
+interface Vlan10
+ ip access-group RESTRICT_HN_VLAN in
+interface Vlan20
+ ip access-group RESTRICT_HN_VLAN in
+interface Vlan30
+ ip access-group RESTRICT_HN_VLAN in
+interface Vlan40
+ ip access-group RESTRICT_HN_VLAN in
+exit
+!
+!
+ip access-list extended RESTRICT_DN_VLAN
+ permit tcp any 10.3.60.0 0.0.0.255 established
+ deny ip any 10.3.60.0 0.0.0.255
+ deny ip any 10.3.10.0 0.0.0.255
+ deny ip any 10.3.20.0 0.0.0.255
+ deny ip any 10.3.30.0 0.0.0.255
+ deny ip any 10.3.40.0 0.0.0.255
+ permit ip any any
+exit
+!
+interface Vlan10
+ ip access-group RESTRICT_DN_VLAN in
+interface Vlan20
+ ip access-group RESTRICT_DN_VLAN in
+interface Vlan30
+ ip access-group RESTRICT_DN_VLAN in
+interface Vlan40
+ ip access-group RESTRICT_DN_VLAN in
+exit
