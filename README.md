@@ -91,48 +91,83 @@ Hệ thống mạng được thiết kế đáp ứng các tiêu chuẩn khắt 
 ```mermaid
 graph TB
     subgraph INTERNET["☁️ Internet / ISP"]
-        ISP1["ISP Primary"]
-        ISP2["ISP Backup"]
+        ISP_HCM1["ISP HCM Primary<br/>10.1.0.1"]
+        ISP_HCM2["ISP HCM Backup<br/>10.2.0.1"]
+        ISP_HN["ISP Hà Nội"]
+        ISP_DN["ISP Đà Nẵng<br/>10.3.0.1"]
     end
 
-    subgraph HCM["🏢 Trụ sở HCM - 10.1.x.x"]
-        CR1["Core Router<br/>10.1.0.2"]
-        BR1["Backup Router<br/>10.2.0.2"]
-        SWL3_M1["SWL3 Main<br/>HSRP Active<br/>Priority 150"]
-        SWL3_B1["SWL3 Backup<br/>HSRP Standby<br/>Priority 100"]
+    subgraph HCM["🏢 Trụ sở chính HCM — 10.1.x.x / 10.2.x.x"]
+        CR1["Core Router HCM<br/>OSPF ID: 2.2.2.2<br/>10.1.1.1"]
+        BR1["Backup Router HCM<br/>OSPF ID: 3.3.3.3<br/>10.2.2.1"]
 
-        subgraph VLANS_HCM["VLANs"]
-            V10_1["VLAN 10<br/>KeToan"]
-            V20_1["VLAN 20<br/>QLRR"]
-            V30_1["VLAN 30<br/>IT"]
-            V40_1["VLAN 40<br/>WiFi CTY"]
-            V50_1["VLAN 50<br/>WiFi Guest"]
-            V60_1["VLAN 60<br/>Mgmt"]
-            V70_1["VLAN 70<br/>DC"]
+        SWL3_M1["SWL3 Main HCM<br/>OSPF ID: 1.1.1.1<br/>HSRP Active — Priority 150<br/>STP Root Primary"]
+        SWL3_B1["SWL3 Backup HCM<br/>OSPF ID: 4.4.4.4<br/>HSRP Standby — Priority 100<br/>STP Root Secondary"]
+
+        subgraph VLANS_HCM["Access Layer — 7 VLANs"]
+            V10_H["🏦 VLAN 10 — KeToan<br/>10.1.10.0/24"]
+            V20_H["📊 VLAN 20 — QuanLyRuiRo<br/>10.1.20.0/24"]
+            V30_H["💻 VLAN 30 — IT<br/>10.1.30.0/24"]
+            V40_H["📶 VLAN 40 — WiFi CTY<br/>10.1.40.0/24"]
+            V50_H["🌐 VLAN 50 — WiFi Guest<br/>120.36.18.0/24"]
+            V60_H["🔧 VLAN 60 — Management<br/>10.1.60.0/24"]
+            V70_H["🖥️ VLAN 70 — DataCenter<br/>10.1.70.0/24"]
         end
 
-        ISP1 --> CR1
-        ISP2 --> BR1
-        CR1 --> SWL3_M1
-        BR1 --> SWL3_B1
+        ISP_HCM1 --> CR1
+        ISP_HCM2 --> BR1
+        CR1 -->|"10.1.1.0/30"| SWL3_M1
+        BR1 -->|"10.2.2.0/30<br/>OSPF Cost 100"| SWL3_B1
         SWL3_M1 --> VLANS_HCM
-        SWL3_B1 --> VLANS_HCM
+        SWL3_B1 -.->|"Standby"| VLANS_HCM
     end
 
-    subgraph HN["🏢 Chi nhánh Hà Nội - 10.4.x.x"]
+    subgraph HN["🏢 Chi nhánh Hà Nội — 10.4.x.x"]
         CR3["Core Router HN"]
-        SWL3_M3["SWL3 Main HN"]
-        SWL3_B3["SWL3 Backup HN"]
+        BR3["Backup Router HN"]
+
+        SWL3_M3["SWL3 Main HN<br/>OSPF ID: 6.6.6.6<br/>HSRP Active — Priority 150"]
+        SWL3_B3["SWL3 Backup HN<br/>OSPF ID: 7.7.7.7<br/>HSRP Standby — Priority 100"]
+
+        subgraph VLANS_HN["Access Layer — 6 VLANs"]
+            V10_N["🏦 VLAN 10 — KeToan<br/>10.4.10.0/24"]
+            V20_N["📊 VLAN 20 — QuanLyRuiRo<br/>10.4.20.0/24"]
+            V30_N["💻 VLAN 30 — IT<br/>10.4.30.0/24"]
+            V40_N["📶 VLAN 40 — WiFi CTY<br/>10.4.40.0/24"]
+            V50_N["🌐 VLAN 50 — WiFi Guest<br/>120.36.19.0/24"]
+            V60_N["🔧 VLAN 60 — Management<br/>10.4.60.0/24"]
+        end
+
+        ISP_HN --> CR3
+        CR3 -->|"10.4.1.0/30"| SWL3_M3
+        BR3 -->|"10.4.2.0/30<br/>OSPF Cost 100"| SWL3_B3
+        SWL3_M3 --> VLANS_HN
+        SWL3_B3 -.->|"Standby"| VLANS_HN
     end
 
-    subgraph DN["🏢 Chi nhánh Đà Nẵng - 10.3.x.x"]
-        CR2["Core Router DN"]
-        SWL3_M2["SWL3 Main DN"]
-        SWL3_B2["SWL3 Backup DN"]
+    subgraph DN["🏢 Chi nhánh Đà Nẵng — 10.3.x.x"]
+        CR2["Core Router DN<br/>10.3.0.2"]
+
+        SWL3_M2["SWL3 Main DN<br/>OSPF ID: 9.9.9.9<br/>HSRP Active — Priority 150<br/>Rapid-PVST Root Primary"]
+        SWL3_B2["SWL3 Backup DN<br/>OSPF ID: 10.10.10.10<br/>HSRP Standby — Priority 100<br/>Rapid-PVST Root Secondary"]
+
+        subgraph VLANS_DN["Access Layer — 5 VLANs"]
+            V10_D["🏦 VLAN 10 — KeToan<br/>10.3.10.0/24"]
+            V20_D["📊 VLAN 20 — QuanLyRuiRo<br/>10.3.20.0/24"]
+            V30_D["💻 VLAN 30 — IT<br/>10.3.30.0/24"]
+            V40_D["📶 VLAN 40 — WiFi CTY<br/>10.3.40.0/24"]
+            V60_D["🔧 VLAN 60 — Management<br/>10.3.60.0/24"]
+        end
+
+        ISP_DN --> CR2
+        CR2 -->|"10.3.1.0/30"| SWL3_M2
+        CR2 -->|"10.3.2.0/30<br/>OSPF Cost 100"| SWL3_B2
+        SWL3_M2 --> VLANS_DN
+        SWL3_B2 -.->|"Standby"| VLANS_DN
     end
 
-    HCM -.->|"VPN Site-to-Site<br/>GRE + IPSec"| HN
-    HCM -.->|"VPN Site-to-Site<br/>GRE + IPSec"| DN
+    HCM <-.->|"VPN Site-to-Site<br/>GRE + IPSec<br/>OSPF Area 0 ↔ Area 1"| HN
+    HCM <-.->|"VPN Site-to-Site<br/>GRE + IPSec<br/>OSPF Area 0"| DN
 ```
 
 ---
